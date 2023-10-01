@@ -3,6 +3,8 @@
     <style name="Base.Theme.MyXMLCalculator" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <item name="android:colorPrimary">@color/orange</item>
+        <item name="android:colorAccent">@color/soft_gray</item>
     </style>
 
     <style name="Theme.MyXMLCalculator" parent="Base.Theme.MyXMLCalculator" />

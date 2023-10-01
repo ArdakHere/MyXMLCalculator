@@ -8,6 +8,8 @@ import android.widget.TextView
 import androidx.core.text.set
 
 class MainActivity : AppCompatActivity() {
+    private val model = CalculatorModel()
+    private val controller = CalculatorController(model)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -39,7 +41,21 @@ class MainActivity : AppCompatActivity() {
         val equalButton = findViewById<Button>(R.id.button53)
 
         ACbutton.setOnClickListener(){
-            textField.text.drop(1)
+            val currentText = textField.text.toString()
+
+            if(currentText == "Error"){
+                textField.text.clear()
+            } else if(currentText != "Error" && !currentText.isEmpty()){
+                // Remove the last character
+
+                val modifiedText = currentText.substring(0, currentText.length - 1)
+
+                // Set the modified text back to the EditText
+                textField.setText(modifiedText)
+            } else if (currentText.isEmpty()){
+
+            }
+
         }
         Cbutton.setOnClickListener(){
             textField.text.clear()
@@ -48,75 +64,64 @@ class MainActivity : AppCompatActivity() {
         // percent button?
 
         divideButton.setOnClickListener(){
-            textField.text.toString().plus("/")
+            textField.text.append("/")
         }
 
         // 2nd ROW
 
         sevenButton.setOnClickListener(){
-            textField.text.toString().plus("7")
+            textField.text.append("7")
         }
 
         eightButton.setOnClickListener(){
-            textField.text.toString().plus("8")
+            textField.text.append("8")
         }
         nineButton.setOnClickListener(){
-            textField.text.toString().plus("9")
+            textField.text.append("9")
         }
         xButton.setOnClickListener(){
-            textField.text.toString().plus("X")
+            textField.text.append("x")
         }
 
         // 3rd ROW
 
         fourButton.setOnClickListener(){
-            textField.text.toString().plus("4")
+            textField.text.append("4")
         }
         fiveButton.setOnClickListener(){
-            textField.text.toString().plus("5")
+            textField.text.append("5")
         }
         sixButton.setOnClickListener(){
-            textField.text.toString().plus("6")
+            textField.text.append("6")
         }
         negativeButton.setOnClickListener(){
-            textField.text.toString().plus("-")
+            textField.text.append("-")
         }
 
         oneButton.setOnClickListener(){
-            textField.text.toString().plus("1")
+            textField.text.append("1")
         }
         twoButton.setOnClickListener(){
-            textField.text.toString().plus("2")
+            textField.text.append("2")
         }
         threeButton.setOnClickListener(){
-            textField.text.toString().plus("3")
+            textField.text.append("3")
         }
-        negativeButton.setOnClickListener(){
-            textField.text.toString().plus("+")
+        plusButton.setOnClickListener(){
+            textField.text.append("+")
         }
 
         zeroButton.setOnClickListener(){
-            textField.text.toString().plus("0")
+            textField.text.append("0")
         }
         decimalButton.setOnClickListener(){
-            textField.text.toString().plus(".")
+            textField.text.append(".")
         }
+
         equalButton.setOnClickListener(){
-            var i = 0
-            var num1 = 0
-            var num2 = 0
-            if(textField.text.contains("+")){
-
-                while(textField.text.get(i)!='+'){
-                    num1.plus(textField.text.get(i).code)
-                }
-                i++
-                while(i<textField.length()){
-                    num2.plus(textField.text.get(i).code)
-                }
-                textField.setText(num1+num2)
-            }
+            val value = textField.text.toString()
+            textField.text.clear()
+            textField.setText(controller.onButtonPressed(value))
         }
-
     }
 }
