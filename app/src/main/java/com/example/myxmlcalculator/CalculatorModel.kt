@@ -1,79 +1,81 @@
 package com.example.myxmlcalculator
 
+import java.util.Stack
+
 class CalculatorModel {
-    val stackOfNumbers = ArrayDeque<Double>()
-    val stackOfOperators = ArrayDeque<Char>()
+
 
     fun performCalculation(input: String): String {
         // Implement your calculation logic here
+        return evaluateRPN(inputToRPN(input))
+    }
 
-        var i = 0
-        var markerNumberEnded = 0
-        val charForNumbers = ""
+    fun evaluateRPN(expression: String): String{
 
-        while (i < input.length) {
-            if (input[i] > '0' && input[i] <= '9') {
-                while (input[i] > '0' && input[i] <= '9') {
-                    charForNumbers.plus(input[i])
-                    markerNumberEnded = 1
-                    i++
+        val stack = Stack<Double>()
+        val operators = setOf("+", "-", "x", "/")
+
+        val tokens = expression.split(Regex("\\s+"))
+
+        for (token in tokens) {
+            if (!operators.contains(token)) {
+                stack.push(token.toDouble())
+            } else {
+                val operand2 = stack.pop()
+                val operand1 = stack.pop()
+                when (token) {
+                    "+" -> stack.push(operand1 + operand2)
+                    "-" -> stack.push(operand1 - operand2)
+                    "x" -> stack.push(operand1 * operand2)
+                    "/" -> stack.push(operand1 / operand2)
                 }
-                if (markerNumberEnded == 1) {
-                    stackOfNumbers.addLast(charForNumbers.toInt().toDouble())
-                }
-            } else if (input[i] == 'x' || input[i] == '-' ||
-                input[i] == '+' || input[i] == '/'
-            ) {
-                stackOfOperators.addLast(input[i])
-                i++
             }
-
         }
+        return stack.pop().toString()
+    }
+    fun inputToRPN(infixExpression: String): String {
+        val stack = ArrayDeque<Char>()
+        val output = mutableListOf<String>() // Use a list of strings instead of characters
+        val precedence = mapOf('+' to 1, '-' to 1, 'x' to 2, '/' to 2)
 
-        if (input != null) {
-            val number1 = 0
-            val number2 = 0
-            while(!stackOfNumbers.isEmpty()){
-                val number1 = stackOfNumbers.removeLast()  // 2
-                val number2 = stackOfNumbers.removeLast()  // 3
-                val currentOperator = stackOfOperators.removeFirst() // *
+        for (char in infixExpression) {
+            when {
+                char.isDigit() -> {
+                    output.add(char.toString()) // Add digits as separate strings
 
-                if(currentOperator == '+'){
-                    val sum = number1 + number2
-                    val formattedResult = String.format("%.3f", sum)
-                    stackOfNumbers.addLast(formattedResult.toDouble())
                 }
-
-                if(currentOperator == 'x'){
-                    val sum = number1 * number2
-                    val formattedResult = String.format("%.3f", sum)
-                    stackOfNumbers.addLast(formattedResult.toDouble())
+                char in "+-x/" -> {
+                    while (stack.isNotEmpty() && stack.first() in "+-x/" &&
+                        precedence[char]!! <= precedence[stack.first()]!!) {
+                        output.add(stack.removeFirst().toString()) // Add operators as separate strings
+                    }
+                    stack.addFirst(char)
                 }
-
-                if(currentOperator == '-'){
-                    val sum = number1 - number2
-                    val formattedResult = String.format("%.3f", sum)
-                    stackOfNumbers.addLast(formattedResult.toDouble())
+                char == '(' -> {
+                    stack.addFirst(char)
                 }
-
-                if(currentOperator == '/'){
-                    if (number2.toInt() != 0 || number2 != 0.0) {
-                        val quotient = number1 / number2
-                        val formattedResult = String.format("%.3f", quotient)
-                        stackOfNumbers.addLast(formattedResult.toDouble())
-                    } else {
-                        // Handle division by zero
-                        return "Error"
+                char == ')' -> {
+                    while (stack.isNotEmpty() && stack.first() != '(') {
+                        output.add(stack.removeFirst().toString()) // Add operators as separate strings
+                    }
+                    if (stack.isNotEmpty() && stack.first() == '(') {
+                        stack.removeFirst() // Remove the opening parenthesis
                     }
                 }
+                char.isWhitespace() -> {
+                    // Ignore whitespace
+                }
+                else -> {
+                    // Handle other characters (variables, functions, etc.) if needed
+                }
             }
-            return number1.toString()
-
-        } else {
-            // Handle invalid input or expression here
-            return "Error"
         }
-        return ""
+
+        while (stack.isNotEmpty()) {
+            output.add(stack.removeFirst().toString()) // Add remaining operators as separate strings
+        }
+
+        return output.joinToString(" ") // Join with spaces
     }
 }
 
