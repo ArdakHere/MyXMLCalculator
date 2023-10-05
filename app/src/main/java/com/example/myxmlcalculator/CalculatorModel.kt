@@ -13,14 +13,14 @@ class CalculatorModel {
 
     fun evaluateRPN(expression: String): String{
 
-        val stack = Stack<Int>()
+        val stack = Stack<Double>()
         val operators = setOf("+", "-", "x", "/")
 
         val tokens = expression.split(Regex("\\s+"))
 
         for (token in tokens) {
             if (!operators.contains(token)) {
-                stack.push(token.toInt())
+                stack.push(token.toDouble())
             } else {
                 val operand2 = stack.pop()
                 val operand1 = stack.pop()
@@ -45,14 +45,26 @@ class CalculatorModel {
 
         while (i<infixExpression.length) {
             when {
-                infixExpression[i].isDigit() -> {
-                    while(infixExpression[i].isDigit()) {
+                infixExpression[i].isDigit() || infixExpression[i] == '.' ||
+                        (infixExpression[i] == '-' && i == 0)
+                -> {
+                    if(infixExpression[i] == '-' && i == 0){
                         multiDigitNumber.append(infixExpression[i])
+                        i++
+                    }
+                    while(infixExpression[i].isDigit() || infixExpression[i]
+                        == '.') {
+                        if(infixExpression[i].isDigit()){
+                            multiDigitNumber.append(infixExpression[i])
+                        }
+                        if(infixExpression[i] == '.'){
+                            multiDigitNumber.append(infixExpression[i])
+                        }
+
                         if(i+1 == infixExpression.length){
                             exitLoopMarker = 1
                             i++
                             break
-
                         } else {
                             i++
                         }

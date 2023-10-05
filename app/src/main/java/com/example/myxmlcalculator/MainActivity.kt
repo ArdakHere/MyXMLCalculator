@@ -64,7 +64,9 @@ class MainActivity : AppCompatActivity() {
         // percent button?
 
         divideButton.setOnClickListener(){
-            textField.text.append("/")
+            if(!textField.text.isEmpty()) {
+                textField.text.append("/")
+            }
         }
 
         // 2nd ROW
@@ -80,7 +82,9 @@ class MainActivity : AppCompatActivity() {
             textField.text.append("9")
         }
         xButton.setOnClickListener(){
-            textField.text.append("x")
+            if(!textField.text.isEmpty()){
+                textField.text.append("x")
+            }
         }
 
         // 3rd ROW
@@ -108,7 +112,9 @@ class MainActivity : AppCompatActivity() {
             textField.text.append("3")
         }
         plusButton.setOnClickListener(){
-            textField.text.append("+")
+            if(!textField.text.isEmpty()) {
+                textField.text.append("+")
+            }
         }
 
         zeroButton.setOnClickListener(){
